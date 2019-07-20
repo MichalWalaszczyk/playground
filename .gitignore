@@ -1,0 +1,6 @@
+*.jar
+*.class
+*.netbeans_automatic_build
+*.lst
+*.properties
+target/
