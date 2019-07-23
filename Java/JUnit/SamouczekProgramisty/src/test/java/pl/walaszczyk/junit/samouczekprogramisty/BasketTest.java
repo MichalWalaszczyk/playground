@@ -43,7 +43,7 @@ public class BasketTest {
         this.basket = new Basket();
         this.expectedOrderedItemMap = new HashMap();
         this.expectedBasket = new Basket();
-        this.itemWorthTwoPointFifty = new Item(BigDecimal.valueOf(12.50), "Item worth 12.50 PLN.");
+        this.itemWorthTwoPointFifty = new Item(BigDecimal.valueOf(2.50), "Item worth 2.50 PLN.");
         this.itemWorthTwelvePointFifty = new Item(BigDecimal.valueOf(12.50), "Item worth 12.50 PLN.");
     }
 
@@ -115,16 +115,36 @@ public class BasketTest {
     @Test
     public void shouldDeleteMultipleItems() {
         this.basket.addItemToOrderedItemsMultipleTimes(new Item(BigDecimal.valueOf(2.50), "Item worth 2.50 PLN."), 5);
-        this.basket.removeItem(itemWorthTwoPointFifty);
+        this.basket.removeItemMultipleTimes(this.itemWorthTwoPointFifty, 4);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldNotAllowToDeleteNegativeNumberOfItems() {
+        this.basket.addItemToOrderedItemsMultipleTimes(new Item(BigDecimal.valueOf(2.50), "Item worth 2.50 PLN."), 5);
+        this.basket.removeItemMultipleTimes(this.itemWorthTwoPointFifty, -1);
+    }
+    
+    @Test(expected = IllegalStateException.class)
+    public void shouldNotAllowToDeleteMoreItemsThanItIsInTheBasket() {
+        this.basket.addItemToOrderedItemsMultipleTimes(new Item(BigDecimal.valueOf(2.50), "Item worth 2.50 PLN."), 5);
+        this.basket.removeItemMultipleTimes(this.itemWorthTwoPointFifty, 6);
     }
 
     @Test
     public void shouldCheckValueOfTheOrder() {
-
+        this.basket.addItemToOrderedItemsMultipleTimes(this.itemWorthTwoPointFifty, 3);
+        this.basket.addItemToOrderedItemsMultipleTimes(this.itemWorthTwelvePointFifty, 1);
+        Assert.assertEquals(this.basket.computeTotalPriceOfAllItemsInTheBasket(), new BigDecimal("20.0"));
     }
-
+    
     @Test
-    public void shouldImplementComparableInterface() {
+    public void shouldCheckToString() {
+        this.basket.addItemToOrderedItemsMultipleTimes(new Item(new BigDecimal(11), "Kebab"), 2);
+        System.out.println(this.basket.toString());
+        Assert.assertEquals("0. - Kebab - 11 PLN x 2 szt = 22 PLN", this.basket.toString());
     }
 
+//    @Test
+//    public void shouldImplementComparableInterface() {
+//    }
 }

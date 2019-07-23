@@ -5,6 +5,7 @@
  */
 package pl.walaszczyk.junit.samouczekprogramisty;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -51,7 +52,7 @@ public class Basket {
             this.orderedItems.put(item, numberOfItems);
         }
     }
-    
+
     public void removeItem(Item item) {
         if (!this.orderedItems.isEmpty() && this.orderedItems.containsKey(item)) {
             this.orderedItems.remove(item);
@@ -59,16 +60,44 @@ public class Basket {
             throw new IllegalStateException("Kosztyk jest pusty lub nie posiada elementu, którego nastąpiła próba usunięcia.");
         }
     }
-    
+
     public void removeItemMultipleTimes(Item item, Integer numberOfItems) {
         if (numberOfItems < 1) {
             throw new IllegalArgumentException("Ilosc elementow do usunięcia nie może być mniejsza niż 1.");
         }
-        if (!this.orderedItems.isEmpty() && this.orderedItems.containsKey(item) && this.orderedItems.get(item) >= numberOfItems) {
+        if (!this.orderedItems.isEmpty() && this.orderedItems.containsKey(item)) {
+            if (this.orderedItems.get(item) < numberOfItems) {
+                throw new IllegalStateException("W koszyku nie ma elementu, w ilości, w której próbujesz go usunąć.");
+            }
             this.orderedItems.remove(item);
         } else {
-            throw new IllegalStateException("Kosztyk jest pusty lub nie posiada elementów w ilości, w której nastąpiła próba usunięcia.");
+            throw new IllegalStateException("Kosztyk jest pusty lub nie posiada elementu, którego nastąpiła próba usunięcia.");
         }
+    }
+
+    public BigDecimal computeTotalPriceOfAllItemsInTheBasket() {
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (Map.Entry<Item, Integer> orderedItem : this.orderedItems.entrySet()) {
+            totalPrice = totalPrice.add(orderedItem.getKey().getPrice().multiply(new BigDecimal(orderedItem.getValue())));
+        }
+        return totalPrice;
+    }
+
+    @Override
+    public String toString() {
+        String details = new String();
+        int index = 0;
+        for (Map.Entry<Item, Integer> orderedItem : this.orderedItems.entrySet()) {
+            details = details.concat(String.valueOf(index))
+                    .concat(". - ").concat(orderedItem.getKey().getName())
+                    .concat(" - ").concat(orderedItem.getKey().getPrice().toString()).concat(" PLN")
+                    .concat(" x ").concat(orderedItem.getValue().toString()).concat(" szt")
+                    .concat(" = ")
+                    .concat(orderedItem.getKey().getPrice().multiply(new BigDecimal(orderedItem.getValue())).toString())
+                    .concat(" PLN");
+            ++index;
+        }
+        return details;
     }
 
     @Override
