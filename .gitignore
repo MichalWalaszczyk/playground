@@ -4,5 +4,5 @@
 *.lst
 *.properties
 target/
-.idea/*
-*.class
+.idea
+*.iml
